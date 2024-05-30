@@ -3,11 +3,26 @@ class Persona{
 	var property celulas
 	var temperatura = 36
 	
+	method temperatura() = temperatura
 	method contraeEnfermedad(unaEnfermedad){ enfermedades.add(unaEnfermedad)}
 	method aumentaTemperatura(valor){
-		temperatura = 45.max(temperatura+valor)
+		temperatura = temperatura+valor
 	}
 	method pasaUnDia(){	
+		enfermedades.forEach({e=> e.causaEfecto(self) })
+	}
+	method destruirCelulas(cantidad){
+		celulas = celulas - cantidad
+	}
+	method recibirMedicacion(cantidad){
+		enfermedades.forEach({ e => e.celulas() - cantidad*15 })
+	}
+
+}
+
+class Medico{
+	method atenderPersona(unaPersona, medicamento){
+		unaPersona.recibirMedicacion(medicamento)
 	}
 }
 
@@ -19,7 +34,7 @@ class Enfermedad{
 class EnfermedadInfecciosa inherits Enfermedad{
 	
 	method causaEfecto(persona){
-		persona.aumentaTemperatura( 45.max(celulas/1000)) 
+		persona.aumentaTemperatura(celulas/1000) 
 		}
 	method reproducirse(){
 		celulas = celulas * 2
@@ -30,6 +45,14 @@ class EnfermedadInfecciosa inherits Enfermedad{
 	}
 }
 
+class EnfermedadAutoinmune inherits Enfermedad{
+	var dias = 0
+	method causaEfecto(persona){
+		persona.destruirCelulas(celulas)
+		dias = dias +1
+	}
+	method enfermedadesAgresivas(persona){return dias >=30} 
+}
 class EnfermedadAutoinmune inherits Enfermedad{
 	var dias
 	method causaEfecto(persona){
